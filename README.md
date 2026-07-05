@@ -87,6 +87,28 @@ plugin optimizes for convenience; codebate optimizes for *independence you can a
 They compose fine: keep the Codex plugin for delegating work, and invoke codebate
 when a decision — not a task — is what's on the table.
 
+### "But `/codex:adversarial-review` already exists" — a *change* vs a *choice*
+
+Fair — that command is the closest overlap, and it's genuinely good. But it reviews
+a **change**; codebate adjudicates a **choice**. That's a different unit of work:
+
+| | `/codex:adversarial-review` | codebate |
+|---|---|---|
+| **Operates on** | an existing **code change** (a `git diff` — working tree / branch / `--base`). | a **decision** — a design fork, a plan, a policy — which may have *no diff at all*. |
+| **Shape** | one Codex pass, returned verbatim. | a protocol: you commit a position first → independent critique → per-item response → one converged verdict. |
+| **Anti-anchoring** | none — Codex sees the whole change (that's the point). | you commit before you hear it, and the critic never sees your position. |
+| **Leaves behind** | ephemeral findings in the chat. | a durable, provenance-stamped artifact (model id + `thread_id` + verdict). |
+| **Runs** | manually (`disable-model-invocation`). | proactively, on the *stakes* of a decision. |
+
+The tell: *"Postgres or SQLite for this workload?"* has **nothing to `git diff`** —
+adversarial-review has no change to chew on, codebate is exactly for it.
+
+**And where the change-review is genuinely better, use it.** For finding code
+defects in a diff — line-anchored, structured, ship/no-ship — `/codex:adversarial-review`
+beats codebate; codebate isn't trying to be a code reviewer. They stack: **codebate
+at the fork to decide *what* to build → adversarial-review on the diff to check it
+ships safely.** Same engine (`codex exec`), different unit of work.
+
 ## Install
 
 Requires the [Codex CLI](https://github.com/openai/codex) installed and
