@@ -13,9 +13,11 @@ forcing a structured, auditable process around your riskiest decisions:
 3. **Respond point-by-point**, citing evidence for every disposition.
 4. **Converge** into one verdict, captured in an auditable artifact file.
 
-A companion hook watches process-critical paths (`CLAUDE.md`, `settings.json`,
-`.claude/hooks/*`, `.claude/skills/*`) and reminds you — or blocks you, in
-enforce mode — when you edit one without doing the work.
+You invoke codebate on the **stakes** of a decision — a design fork, an
+irreversible change, a hard problem — not on which file you touched. An optional
+companion hook can turn that into a hard gate: with enforcement on, edits to
+process-critical files (`CLAUDE.md`, `settings.json`, hooks, skills) are blocked
+until the debate is done. It's off by default (see [The hook](#the-hook-judgment-first-enforcement-optional)).
 
 ## Why "cross-model" is the whole point
 
@@ -55,7 +57,7 @@ triggers proactively.
 | Piece | Role |
 |---|---|
 | `debate-critique-agreement` skill | The protocol: commit → cross-model critique → per-item convergence → artifact. |
-| `dca-gate.sh` hook | Watches process-critical paths; reminds/blocks when one is edited with no fresh artifact. |
+| `dca-gate.sh` hook | Optional gate on process-critical edits — quiet by default; opt into reminders (`DCA_QUIET=0`) or a hard block (`DCA_ENFORCE=1`). |
 | `scripts/dca-codex.py` | Runs the critique with liveness monitoring — polls codex's event stream and bails fast if it hangs, instead of blocking on a long timeout. |
 | `assets/TEMPLATE.md` | The artifact skeleton the protocol fills in. |
 | `/codebate` command | Kicks off a decision process directly. |
