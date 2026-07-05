@@ -27,7 +27,7 @@ until the debate is done. It's off by default (see [The hook](#the-hook-judgment
 flowchart TD
     A["High-stakes decision<br/>design fork · irreversible change · hard problem"]:::start
     A --> B["<b>1 · Commit your position first</b><br/>Claude / Opus — in writing; the critic never sees it"]:::pillar
-    B --> C["<b>2 · Cross-model critique</b><br/>a provably different model (Codex / GPT)<br/>independently critiques the same evidence & options"]:::pillar
+    B --> C["<b>2 · Cross-model critique</b><br/>a verifiably different model (Codex / GPT)<br/>independently critiques the same evidence & options"]:::pillar
     C --> D["3 · Respond point-by-point<br/>engage each of the critic's points, cite evidence"]:::step
     D --> E["4 · Converge → one verdict"]:::step
     E --> F["Auditable artifact<br/>~/.claude/dca/&lt;timestamp&gt;_topic.md<br/>question · verbatim critique · model id · verdict"]:::artifact
@@ -43,7 +43,7 @@ flowchart TD
 
 The two blue steps are the guarantees that make it more than a chat with another
 model: you **commit before you hear the critique** (no rubber-stamping), and the
-critic is a **provably different** model (no shared blind spots).
+critic is a **verifiably different** model (no shared blind spots).
 
 ## Why "cross-model" is the whole point
 
@@ -75,7 +75,7 @@ The distinction is **access vs. process**. A raw Codex call is a second opinion
 *on tap*; codebate is the second-opinion *ceremony* — it decides **when** a decision
 is high-stakes enough to warrant one, forces you to **commit your position before**
 you hear the critique (so you can't rubber-stamp), guarantees the critic is a
-**provably different** model (the hollow-provenance bug above), and leaves an
+**verifiably different** model (the hollow-provenance bug above), and leaves an
 **artifact** so the reasoning survives the session.
 
 **Why not just build this on top of the Codex plugin?** Because a plugin wrapper is
