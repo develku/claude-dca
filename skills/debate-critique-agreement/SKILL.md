@@ -203,9 +203,12 @@ The critique leg runs under `codex exec -s read-only`. Verified behaviour:
 
 ## Enforcement modes
 
-- **Advisory (default)** — the hook emits a reminder and allows the edit.
+- **Advisory (default)** — the hook emits a reminder and allows the edit. It only
+  reminds and logs; it does NOT block or enforce.
 - **Enforce** — set `DCA_ENFORCE=1` and the hook blocks (exit 2) a watched-path
   edit that has no fresh artifact / bypass marker.
+- **Quiet** — set `DCA_QUIET=1` to suppress the advisory reminder while keeping the
+  audit log (ignored under `DCA_ENFORCE=1`, where a block must explain itself).
 
 ## Bypass (NOT for process-critical)
 

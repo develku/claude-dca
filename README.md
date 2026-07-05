@@ -107,13 +107,21 @@ The leg runs under `codex exec -s read-only`. Verified behaviour:
 | **Enforce** | Hook blocks (exit 2) a watched-path edit with no fresh artifact. | `export DCA_ENFORCE=1` |
 
 Advisory is the default on purpose: a hard gate that fires on every config edit
-gets resented and routed around. Turn on enforcement when you *want* the friction.
+gets resented and routed around. **In advisory mode the hook only reminds and
+logs — it does NOT block or enforce anything** (don't mistake it for a hard gate).
+Turn on enforcement when you *want* the friction; silence just the reminder with
+`DCA_QUIET=1` if you want the audit trail but not the nudge.
+
+The hook runs on every `Edit`/`Write`/`Bash`, but a pure-bash fast path exits
+immediately (no `python3`) unless the input actually touches a watched path — so
+the common case costs ~2ms, not ~100ms.
 
 ## Configuration
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `DCA_ENFORCE` | `0` | `1` = hard-block instead of advisory reminder. |
+| `DCA_ENFORCE` | `0` | `1` = hard-block (exit 2) instead of an advisory reminder. |
+| `DCA_QUIET` | `0` | `1` = suppress the advisory reminder (still logs to the audit trail). Ignored in enforce mode — a block always explains itself. |
 | `DCA_ARTIFACT_DIR` | `~/.claude/dca` | Where decision artifacts are written. |
 
 ## Limits (read these)

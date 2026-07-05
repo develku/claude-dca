@@ -34,6 +34,7 @@ BYPASS_LOG="$DCA_DIR/_bypass_log.md"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 TEMPLATE="$PLUGIN_ROOT/assets/TEMPLATE.md"
 DCA_ENFORCE="${DCA_ENFORCE:-0}"       # 0 = advisory (default), 1 = hard block
+DCA_QUIET="${DCA_QUIET:-0}"           # 1 = suppress the advisory reminder (still logs); ignored in enforce mode
 FRESHNESS_MINUTES=60
 TRIVIAL_MAX_LINES=20
 
@@ -81,23 +82,39 @@ block() {
     mode_label="ADVISORY"; exit_code=0
   fi
   log_decision "$mode_label" "${2:-?}" "$1"
-  {
-    echo "[dca-gate] $mode_label: editing watched path ${2:-?}"
-    echo "Reason: $1"
-    echo
-    if [ -n "${3:-}" ]; then
-      printf '%s\n' "$3"
+  # Show the message when enforcing (a block needs an explanation) or when not
+  # quieted. DCA_QUIET=1 silences only the advisory reminder.
+  if [ "$exit_code" = "2" ] || [ "$DCA_QUIET" != "1" ]; then
+    {
+      echo "[dca-gate] $mode_label: editing watched path ${2:-?}"
+      echo "Reason: $1"
       echo
-    fi
-    echo "Run the debate-critique-agreement skill for process-critical changes."
-    [ "$exit_code" = "0" ] && echo "(advisory mode — set DCA_ENFORCE=1 to hard-block instead)"
-  } >&2
+      if [ -n "${3:-}" ]; then
+        printf '%s\n' "$3"
+        echo
+      fi
+      echo "Run the debate-critique-agreement skill for process-critical changes."
+      [ "$exit_code" = "0" ] && echo "(advisory mode — set DCA_ENFORCE=1 to hard-block instead)"
+    } >&2
+  fi
   exit "$exit_code"
 }
 
 # ---- Parse stdin -----------------------------------------------------------
 
 STDIN_JSON="$(cat)"
+
+# Fast path (perf) — the ~99% of tool calls that touch no watched path exit HERE
+# without spawning python3 (~3 cold-starts → ~2ms). De-escape JSON backslashes
+# first so slash-escaped paths (\/.claude\/) still match, and match markers with
+# NO leading slash so absolute AND relative forms both hit. The marker set is a
+# superset of is_watched_path() below → no false-negative; a false positive just
+# falls through to the precise check (safe). An obfuscated path could slip past —
+# already out of scope (this is a forgetfulness guard, not an adversarial guard).
+case "${STDIN_JSON//\\/}" in
+  *CLAUDE.md*|*.claude/settings*|*.claude/hooks/*|*.claude/skills/*) : ;;  # maybe watched → full check
+  *) exit 0 ;;                                                             # definitely not → fast exit
+esac
 
 parse_field() {
   # $1 = field path, e.g. "tool_input.file_path"
