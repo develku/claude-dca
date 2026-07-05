@@ -19,6 +19,30 @@ companion hook can turn that into a hard gate: with enforcement on, edits to
 process-critical files (`CLAUDE.md`, `settings.json`, hooks, skills) are blocked
 until the debate is done. It's off by default (see [The hook](#the-hook-judgment-first-enforcement-optional)).
 
+## At a glance
+
+```mermaid
+flowchart TD
+    A["High-stakes decision<br/>design fork · irreversible change · hard problem"]:::start
+    A --> B["<b>1 · Commit your position first</b><br/>Claude / Opus — in writing, before any critique"]:::pillar
+    B --> C["<b>2 · Cross-model critique</b><br/>a provably different model (Codex / GPT)<br/>challenges each claim, unseen your conclusion"]:::pillar
+    C --> D["3 · Respond point-by-point<br/>cite evidence for every disposition"]:::step
+    D --> E["4 · Converge → one verdict"]:::step
+    E --> F["Auditable artifact<br/>~/.claude/dca/&lt;timestamp&gt;_topic.md<br/>question · verbatim critique · model id · verdict"]:::artifact
+
+    C -. "runs via codex exec -s read-only<br/>liveness monitor bails fast if it stalls" .-> H["scripts/dca-codex.py"]:::side
+
+    classDef start fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef pillar fill:#dbeafe,stroke:#2563eb,color:#1e3a8a,font-weight:bold
+    classDef step fill:#f1f5f9,stroke:#64748b,color:#334155
+    classDef artifact fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef side fill:#faf5ff,stroke:#9333ea,color:#581c87,font-style:italic
+```
+
+The two blue steps are the guarantees that make it more than a chat with another
+model: you **commit before you hear the critique** (no rubber-stamping), and the
+critic is a **provably different** model (no shared blind spots).
+
 ## Why "cross-model" is the whole point
 
 This project exists because of a bug worth telling. An earlier version routed the
