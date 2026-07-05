@@ -14,7 +14,7 @@ Initial public release.
 - `dca-gate` PreToolUse hook — reminds (advisory, default) or blocks
   (`DCA_ENFORCE=1`) when a watched process-critical path is edited without a
   fresh decision artifact.
-- `/dca` slash command — kick off a decision process directly.
+- `/codebate` slash command — kick off a decision process directly.
 - `scripts/dca-codex.py` — runs the cross-model critique with active liveness
   monitoring: it polls the codex `--json` event stream and bails fast on a stall
   (default 90s of silence) instead of blocking on the full hard cap, and kills the

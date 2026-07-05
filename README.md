@@ -1,9 +1,10 @@
-# DCA — Debate-Critique-Agreement for Claude Code
+# codebate — a cross-model decision gate for Claude Code
 
-> A decision gate that makes an AI argue against itself — *properly*.
+> Put a high-stakes decision through a debate before you commit — with a
+> genuinely different model on the other side. *(code + debate)*
 
 When you ask a model to review its own reasoning, it rubber-stamps. It shares its
-own blind spots, so "looks good to me" is nearly free. **DCA** fixes that by
+own blind spots, so "looks good to me" is nearly free. **codebate** fixes that by
 forcing a structured, auditable process around your riskiest decisions:
 
 1. **Commit your position first**, in writing, before any critique.
@@ -26,7 +27,7 @@ echo. The fix was to shell out **directly** to `codex exec`, whose model is
 provider-verifiable.
 
 The lesson generalizes: the value of a critique leg is not how *capable* it is —
-it's how *independent* it is. DCA is built around protecting that independence
+it's how *independent* it is. codebate is built around protecting that independence
 (commit-first, self-contained evidence, verbatim critique) rather than maximizing
 the critic's power.
 
@@ -36,14 +37,14 @@ Requires the [Codex CLI](https://github.com/openai/codex) installed and
 authenticated (this is the cross-model critic) and `python3`.
 
 ```
-/plugin marketplace add develku/claude-dca
-/plugin install dca@develku
+/plugin marketplace add develku/develku-plugins
+/plugin install codebate@develku
 ```
 
 Then, at any decision fork:
 
 ```
-/dca should we store sessions in Postgres or SQLite for this workload?
+/codebate should we store sessions in Postgres or SQLite for this workload?
 ```
 
 …or just describe a high-stakes change — the `debate-critique-agreement` skill
@@ -57,7 +58,7 @@ triggers proactively.
 | `dca-gate.sh` hook | Watches process-critical paths; reminds/blocks when one is edited with no fresh artifact. |
 | `scripts/dca-codex.py` | Runs the critique with liveness monitoring — polls codex's event stream and bails fast if it hangs, instead of blocking on a long timeout. |
 | `assets/TEMPLATE.md` | The artifact skeleton the protocol fills in. |
-| `/dca` command | Kicks off a decision process directly. |
+| `/codebate` command | Kicks off a decision process directly. |
 
 **Hang-resistant by design:** codex can stall without returning. Rather than
 wait out a long timeout, the helper watches the event stream for liveness and
@@ -89,7 +90,7 @@ Or per-invocation: `codex exec -m <model> ...` (or `-c 'model="<model>"'`).
 
 The leg runs under `codex exec -s read-only`. Verified behaviour:
 
-- **Filesystem = the directory you launch from** (not your whole home). Launch DCA
+- **Filesystem = the directory you launch from** (not your whole home). Launch codebate
   from inside a config repo and the critic *can* read those files — so don't rely
   on isolation; feed it a self-contained Evidence Pack.
 - **MCP servers are not auto-loaded** — the critic won't silently read a memory
@@ -101,7 +102,7 @@ The leg runs under `codex exec -s read-only`. Verified behaviour:
 
 ## The hook: judgment-first, enforcement optional
 
-DCA is meant to fire on the **stakes** of a change (see the skill's *When to
+codebate is meant to fire on the **stakes** of a change (see the skill's *When to
 invoke*) — not mechanically on which file you touched. A path-based reminder fires
 on light edits too, so the hook ships **quiet by default**: it logs watched-path
 edits but does not nag. The skill does the judgment-based nudging.
@@ -130,7 +131,7 @@ the common case costs ~2ms, not ~100ms.
 
 ## Limits (read these)
 
-DCA raises the cost of sloppy decisions; it does not make good ones automatic.
+codebate raises the cost of sloppy decisions; it does not make good ones automatic.
 
 - The grounding tags and consistency checks are **prompt discipline, not
   gate-enforced** — they make a skipped check auditable, but nothing mechanical

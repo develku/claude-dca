@@ -1,14 +1,14 @@
 {
-  "name": "dca",
+  "name": "codebate",
   "owner": {
     "name": "develku",
     "url": "https://github.com/develku"
   },
   "plugins": [
     {
-      "name": "dca",
+      "name": "codebate",
       "source": "./",
-      "description": "Debate-Critique-Agreement — multi-model decision gate with a verified cross-model Codex critique leg"
+      "description": "Put a high-stakes decision through a cross-model debate — verified Codex critique, point-by-point convergence, auditable artifact"
     }
   ]
 }

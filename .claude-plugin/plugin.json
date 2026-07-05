@@ -1,7 +1,7 @@
 {
-  "name": "dca",
+  "name": "codebate",
   "version": "0.1.0",
-  "description": "Debate-Critique-Agreement: a multi-model decision gate for high-stakes changes in Claude Code — commit your position first, get a verified cross-model critique from Codex, converge point-by-point, and leave an auditable artifact enforced by a hook.",
+  "description": "codebate — put a high-stakes decision through a cross-model debate before you commit to it: state your position first, get a verified critique from Codex (a genuinely different model), converge point-by-point, and leave an auditable artifact. A debate-critique-agreement gate for Claude Code.",
   "author": {
     "name": "develku",
     "url": "https://github.com/develku"
