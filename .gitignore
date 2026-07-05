@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+# Local runtime artifacts (default artifact dir is ~/.claude/dca, outside the repo).
+# Ignore any that a user points DCA_ARTIFACT_DIR at inside a checkout.
+/dca-artifacts/
+/tmp/
