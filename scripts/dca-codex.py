@@ -10,7 +10,7 @@ growing (stall), so the caller "checks first" instead of waiting blindly. It
 also kills the whole codex process group, so nothing lingers after a bail.
 
 Usage:
-  dca-codex.py <prompt_file> [--stall 90] [--hard 300] [--outdir DIR] [--model M]
+  dca-codex.py <prompt_file> [--stall 150] [--hard 300] [--outdir DIR] [--model M]
 
 Exit codes:
   0    completed — final message on stdout
@@ -26,14 +26,16 @@ import argparse, json, os, signal, subprocess, sys, time
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("prompt_file")
-    ap.add_argument("--stall", type=int, default=90,
-                    help="abort if the event stream gains no new bytes for N seconds")
+    ap.add_argument("--stall", type=int, default=150,
+                    help="abort if the event stream gains no new bytes for N seconds "
+                         "(conservative: --json events are milestones, not heartbeats)")
     ap.add_argument("--hard", type=int, default=300, help="absolute maximum seconds")
     ap.add_argument("--outdir", default="/tmp")
     ap.add_argument("--model", default=None, help="override the codex model")
     ap.add_argument("--poll", type=float, default=3.0)
     args = ap.parse_args()
 
+    os.makedirs(args.outdir, exist_ok=True)
     events = os.path.join(args.outdir, "dca_codex_events.jsonl")
     last = os.path.join(args.outdir, "dca_codex_last.txt")
     open(events, "w").close()

@@ -61,8 +61,12 @@ triggers proactively.
 
 **Hang-resistant by design:** codex can stall without returning. Rather than
 wait out a long timeout, the helper watches the event stream for liveness and
-bails within seconds of a stall (killing the codex process group), reporting a
-clear status so the run records a `SKIPPED` and moves on — it *checks first*.
+bails on a stall (killing the codex process group), reporting a clear status so
+the run records a `SKIPPED` and moves on — it *checks first*. The stall window
+(`--stall`, default 150s) is deliberately conservative: `--json` events are
+milestones, not heartbeats, so a short window can kill a productive-but-silent
+high-reasoning turn. Note it does **not** attempt a `codex exec resume` to
+salvage a near-complete leg — a deliberate simplification for this plugin.
 
 Each decision produces one artifact at `~/.claude/dca/<timestamp>_<topic>.md`
 containing the question, the verbatim cross-model critique (with the model id and

@@ -87,7 +87,7 @@ prompt to a file, then:
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/scripts/dca-codex.py" /tmp/dca_codex_prompt.txt \
-  --outdir /tmp --stall 90 --hard 300
+  --outdir /tmp --stall 150 --hard 300
 ```
 
 Branch on the exit code:
@@ -103,10 +103,17 @@ Every run prints a one-line JSON status to stderr —
 Record `thread_id` as the provenance handle; put the status/reason in the SKIPPED
 note when it did not complete.
 
-Tuning: `--stall` (default 90s) is how long the event stream may go silent before
-the helper declares codex hung; `--hard` (default 300s) is the absolute cap. Lower
-`--stall` for a snappier bail. `-s read-only` = no writes; `--json` gives the event
-stream whose `thread.started` event carries the `thread_id`.
+Tuning: `--stall` (default 150s) is how long the event stream may go silent before
+the helper declares codex hung — kept conservative because `--json` events are
+milestones, not heartbeats, so a short window can kill a productive-but-silent
+(high-reasoning) turn. `--hard` (default 300s) is the absolute cap. `-s read-only` =
+no writes; `--json` gives the event stream whose `thread.started` event carries the
+`thread_id`.
+
+**No resume recovery:** on exit 124 this helper records SKIPPED and you re-run; it
+does NOT attempt a `codex exec resume` to salvage a near-complete leg. That is a
+deliberate simplification for this plugin — a genuinely useful tradeoff to be aware
+of if a leg dies close to completion.
 
 The Codex prompt MUST contain the Evidence Pack + question + options + "critique
 each substantive claim (AGREE / DISAGREE / REFINE), give an overall verdict and
