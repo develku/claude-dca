@@ -99,18 +99,22 @@ The leg runs under `codex exec -s read-only`. Verified behaviour:
 - **Read-only protects integrity, not independence** — it blocks writes, not reads.
   Keep your committed position out of the critic's reachable path.
 
-## Enforcement modes
+## The hook: judgment-first, enforcement optional
+
+DCA is meant to fire on the **stakes** of a change (see the skill's *When to
+invoke*) — not mechanically on which file you touched. A path-based reminder fires
+on light edits too, so the hook ships **quiet by default**: it logs watched-path
+edits but does not nag. The skill does the judgment-based nudging.
 
 | Mode | Behaviour | How |
 |---|---|---|
-| **Advisory** (default) | Hook prints a reminder, allows the edit. | — |
-| **Enforce** | Hook blocks (exit 2) a watched-path edit with no fresh artifact. | `export DCA_ENFORCE=1` |
+| **Quiet** (default) | Logs watched-path edits to the audit trail, stays silent. | — |
+| **Remind** | Prints an advisory reminder on watched-path edits (does NOT block). | `export DCA_QUIET=0` |
+| **Enforce** | Blocks (exit 2) a watched-path edit that has no fresh artifact. | `export DCA_ENFORCE=1` |
 
-Advisory is the default on purpose: a hard gate that fires on every config edit
-gets resented and routed around. **In advisory mode the hook only reminds and
-logs — it does NOT block or enforce anything** (don't mistake it for a hard gate).
-Turn on enforcement when you *want* the friction; silence just the reminder with
-`DCA_QUIET=1` if you want the audit trail but not the nudge.
+Enforce is the real "gate": with `DCA_ENFORCE=1` the agent literally cannot edit a
+process-critical file without doing the debate first — *the AI can forget, but the
+gate cannot*. Off by default; opt in when you want the hard stop.
 
 The hook runs on every `Edit`/`Write`/`Bash`, but a pure-bash fast path exits
 immediately (no `python3`) unless the input actually touches a watched path — so
@@ -120,8 +124,8 @@ the common case costs ~2ms, not ~100ms.
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `DCA_ENFORCE` | `0` | `1` = hard-block (exit 2) instead of an advisory reminder. |
-| `DCA_QUIET` | `0` | `1` = suppress the advisory reminder (still logs to the audit trail). Ignored in enforce mode — a block always explains itself. |
+| `DCA_QUIET` | `1` | `1` = silent (log only); `0` = show the advisory reminder. Ignored under enforce (a block always explains itself). |
+| `DCA_ENFORCE` | `0` | `1` = hard-block (exit 2) instead of allowing the edit. |
 | `DCA_ARTIFACT_DIR` | `~/.claude/dca` | Where decision artifacts are written. |
 
 ## Limits (read these)

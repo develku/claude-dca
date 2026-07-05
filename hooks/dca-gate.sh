@@ -34,7 +34,7 @@ BYPASS_LOG="$DCA_DIR/_bypass_log.md"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 TEMPLATE="$PLUGIN_ROOT/assets/TEMPLATE.md"
 DCA_ENFORCE="${DCA_ENFORCE:-0}"       # 0 = advisory (default), 1 = hard block
-DCA_QUIET="${DCA_QUIET:-0}"           # 1 = suppress the advisory reminder (still logs); ignored in enforce mode
+DCA_QUIET="${DCA_QUIET:-1}"           # default 1 = reminder OFF (still logs); DCA_QUIET=0 shows it; ignored in enforce mode
 FRESHNESS_MINUTES=60
 TRIVIAL_MAX_LINES=20
 

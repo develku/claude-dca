@@ -19,14 +19,22 @@ one is edited without a fresh artifact.
 
 Invoke this skill — without waiting to be asked — when ANY of these fire:
 
-1. **Process-critical change** — an edit to `CLAUDE.md`, `settings.json`,
-   `.claude/hooks/*`, or `.claude/skills/*`. These change how the agent behaves
-   on every future turn.
-2. **Design fork** — an Option A / B / C choice, or interpreting a returned verdict.
-3. **Risky or irreversible change** — autonomous loops, kill switches, data or
+Fire on the **stakes** of a change, not on which file it touches. Routine/light
+edits — including to `CLAUDE.md`, `settings.json`, or `.claude/skills/*` — do NOT
+need DCA; your model plus the skills and CLAUDE.md handle those.
+
+1. **Planning a complex or multi-step task** — before you commit to an approach for
+   genuinely involved work, where a wrong plan is expensive to unwind.
+2. **A consequential process-critical change** — a `CLAUDE.md` / `settings.json` /
+   `.claude/hooks/*` / `.claude/skills/*` edit whose blast radius or irreversibility
+   is real. The canonical case is a `settings.json` hook-config key (`hooks` /
+   `matcher` / `PreToolUse`): one line, but it changes what runs every future session.
+   A typo or a light content edit to the same files is NOT this.
+3. **Design fork** — an Option A / B / C choice, or interpreting a returned verdict.
+4. **Risky or irreversible change** — autonomous loops, kill switches, data or
    money paths, destructive operations, security-sensitive code.
-4. **Stuck** — root cause unclear after a real effort; you want a second read.
-5. **Evidence gate** — local tests passing isn't enough; you need another model's
+5. **Stuck** — root cause unclear after a real effort; you want a second read.
+6. **Evidence gate** — local tests passing isn't enough; you need another model's
    judgement of whether the evidence is actually complete.
 
 ## Requirements
@@ -203,12 +211,13 @@ The critique leg runs under `codex exec -s read-only`. Verified behaviour:
 
 ## Enforcement modes
 
-- **Advisory (default)** — the hook emits a reminder and allows the edit. It only
-  reminds and logs; it does NOT block or enforce.
-- **Enforce** — set `DCA_ENFORCE=1` and the hook blocks (exit 2) a watched-path
-  edit that has no fresh artifact / bypass marker.
-- **Quiet** — set `DCA_QUIET=1` to suppress the advisory reminder while keeping the
-  audit log (ignored under `DCA_ENFORCE=1`, where a block must explain itself).
+The hook is **quiet by default** — it logs watched-path edits but does not nag,
+because DCA should fire on stakes (via the triggers above), not on file paths.
+
+- **Remind** — set `DCA_QUIET=0` to show the advisory reminder on watched-path edits
+  (it still does not block).
+- **Enforce** — set `DCA_ENFORCE=1` and the hook blocks (exit 2) a watched-path edit
+  that has no fresh artifact / bypass marker. This is the real gate.
 
 ## Bypass (NOT for process-critical)
 
